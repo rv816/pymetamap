@@ -1,3 +1,11 @@
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import *
+from builtins import object
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -11,10 +19,11 @@
 # limitations under the License.
 
 import abc
+from future.utils import with_metaclass
 
 DEFAULT_METAMAP_VERSION = '2014AA'
 
-class MetaMap:
+class MetaMap(with_metaclass(abc.ABCMeta, object)):
     """ Abstract base class for extracting concepts from text using
         MetaMap. To use this you will need to have downloaded the
         recent MetaMap software from NLM. metamap_filename should point
@@ -22,7 +31,6 @@ class MetaMap:
 
         Subclasses need to override the extract_concepts method.
     """
-    __metaclass__ = abc.ABCMeta
     def __init__(self, metamap_filename, version=None):
         self.metamap_filename = metamap_filename
         if version is None:
@@ -40,7 +48,7 @@ class MetaMap:
         extra_args.update(metamap_filename=metamap_filename, version=version)
 
         if backend == 'subprocess':
-            from SubprocessBackend import SubprocessBackend
+            from .SubprocessBackend import SubprocessBackend
             return SubprocessBackend(**extra_args)
 
         raise ValueError("Unknown backend: %r (known backends: "

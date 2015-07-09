@@ -1,3 +1,13 @@
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import zip
+from builtins import str
+from builtins import bytes
+from builtins import *
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -79,10 +89,10 @@ class SubprocessBackend(MetaMap):
             if sentences is not None:
                 if ids is not None:
                     for identifier, sentence in zip(ids, sentences):
-                        input_file.write('%r|%r\n' % (identifier, sentence))
+                        input_file.write(bytes('%r|%r\n' % (identifier, sentence), 'UTF-8'))
                 else:
                     for sentence in sentences:
-                        input_file.write('%r\n' % sentence)
+                        input_file.write(bytes('%r\n' % sentence, 'UTF-8'))
                 input_file.flush()
 
             command = [self.metamap_filename, '-N']
@@ -126,7 +136,7 @@ class SubprocessBackend(MetaMap):
             metamap_process = subprocess.Popen(command, stdout=subprocess.PIPE)
             while metamap_process.poll() is None:
                 stdout = metamap_process.stdout.readline()
-                if 'ERROR' in stdout:
+                if b'ERROR' in stdout:
                     metamap_process.terminate()
                     error = stdout.rstrip()
 
@@ -137,6 +147,11 @@ class SubprocessBackend(MetaMap):
             else:
                 input_file.close()
             os.remove(output_file.name)
-
+            if not input_file.closed:
+                input_file.close()
+            if not output_file.closed:
+                output_file.close()
+                
         concepts = Corpus.load(output.splitlines())
+
         return (concepts, error)
