@@ -16,6 +16,9 @@ FIELD_NAMES = ('index', 'mm', 'score', 'preferred_name', 'cui', 'semtypes',
                'trigger', 'location', 'pos_info', 'tree_codes')
 
 class Concept(namedtuple('Concept', FIELD_NAMES)):
+    '''
+    In order, fields are 'index', 'mm', 'score', 'preferred_name', 'cui', 'semtypes', 'trigger', 'location', 'pos_info', 'tree_codes'
+    '''
     def __repr__(self):
         items = [(field, getattr(self, field, None)) for field in FIELD_NAMES]
         fields = ['%s=%r' % (k, v) for k, v in items if v is not None]
@@ -39,4 +42,3 @@ class Corpus(list):
             corpus.append(Concept.from_mmi(line))
 
         return corpus
-

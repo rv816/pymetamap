@@ -24,14 +24,16 @@ class SubprocessBackend(MetaMap):
         MetaMap.__init__(self, metamap_filename, version)
 
     def extract_concepts(self, sentences=None, ids=None,
-                         composite_phrase=4, filename=None,
+                         composite_phrase=4, filename=None, allow_concept_gaps=True,
                          file_format='sldi', allow_acronym_variants=False,
-                         word_sense_disambiguation=False, allow_large_n=False,
+                         word_sense_disambiguation=True, allow_large_n=False,
                          no_derivational_variants=False,
                          derivational_variants=False, ignore_word_order=False,
                          unique_acronym_variants=False,
                          prefer_multiple_concepts=False,
-                         ignore_stop_phrases=False, compute_all_mappings=False):
+                         ignore_stop_phrases=True,
+                         restrict_to_vocabularies_list=['SNOMEDCT_US'],
+                          compute_all_mappings=False, additional_options_list=[]):
         """ extract_concepts takes a list of sentences and ids(optional)
             then returns a list of Concept objects extracted via
             MetaMap.
@@ -90,10 +92,14 @@ class SubprocessBackend(MetaMap):
                 command.append('-y')
             if allow_large_n:
                 command.append('-l')
+            if len(restrict_to_vocabularies_list)>0:
+                command.append('-R {}'.format(str(','.join(restrict_to_vocabularies_list))))
             if no_derivational_variants:
                 command.append('-d')
             if derivational_variants:
                 command.append('-D')
+            if allow_concept_gaps:
+                command.append('-g')
             if ignore_word_order:
                 command.append('-i')
             if allow_acronym_variants:
@@ -106,6 +112,9 @@ class SubprocessBackend(MetaMap):
                 command.append('-K')
             if compute_all_mappings:
                 command.append('-b')
+            if len(additional_options_list) > 0:
+                for x in additional_options_list:
+                    command.append(x)
             if ids is not None or (file_format == 'sldiID' and
                     sentences is None):
                 command.append('--sldiID')
@@ -120,9 +129,9 @@ class SubprocessBackend(MetaMap):
                 if 'ERROR' in stdout:
                     metamap_process.terminate()
                     error = stdout.rstrip()
-                
+
             output = output_file.read()
-        finally:       
+        finally:
             if sentences is not None:
                 os.remove(input_file.name)
             else:

@@ -12,7 +12,7 @@
 
 import abc
 
-DEFAULT_METAMAP_VERSION = '2012'
+DEFAULT_METAMAP_VERSION = '2014AA'
 
 class MetaMap:
     """ Abstract base class for extracting concepts from text using
@@ -30,7 +30,7 @@ class MetaMap:
 
     @abc.abstractmethod
     def extract_concepts(self, sentences=None, ids=None,
-                         filename=None, composite_phrase=4, 
+                         filename=None, composite_phrase=4,
                          file_format='sldi', word_sense_disambiguation=True):
        """ Extract concepts from a list of sentences using MetaMap. """
 
