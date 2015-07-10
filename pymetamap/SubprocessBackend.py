@@ -82,7 +82,8 @@ class SubprocessBackend(MetaMap):
         if sentences is not None:
             input_file = tempfile.NamedTemporaryFile(delete=False)
         else:
-            input_file = open(filename, 'r')
+            with open(filename, 'r') as f:
+                input_file = f
         output_file = tempfile.NamedTemporaryFile(delete=False)
         error = None
         try:
@@ -151,7 +152,7 @@ class SubprocessBackend(MetaMap):
                 input_file.close()
             if not output_file.closed:
                 output_file.close()
-                
+
         concepts = Corpus.load(output.splitlines())
 
         return (concepts, error)
